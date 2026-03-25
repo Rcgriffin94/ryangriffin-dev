@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-garnet: #800020;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: #fafafa;
+  color: #111111;
+}
