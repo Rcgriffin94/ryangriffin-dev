@@ -78,7 +78,7 @@ function UserManagementContent() {
 
     const { error } = await supabase
       .from('invites')
-      .insert({ email: invite.email, role: invite.role });
+      .upsert({ email: invite.email, role: invite.role }, { onConflict: 'email' });
 
     if (error) {
       setInvite((prev) => ({ ...prev, status: '', error: error.message }));
