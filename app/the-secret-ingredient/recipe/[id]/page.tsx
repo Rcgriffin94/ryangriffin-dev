@@ -20,6 +20,7 @@ interface Recipe {
   photo_url?: string;
   content_photo_url?: string;
   content_photo_urls?: string[];
+  source_url?: string;
 }
 
 function RecipeDetailContent() {
@@ -127,13 +128,27 @@ function RecipeDetailContent() {
 
         <h1 className="text-3xl font-bold text-green-900 mb-2">{recipe.title}</h1>
         {recipe.tags && recipe.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-6">
+          <div className="flex flex-wrap gap-1 mb-4">
             {recipe.tags.map((tag) => (
               <span key={tag} className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full">
                 {tag}
               </span>
             ))}
           </div>
+        )}
+
+        {recipe.source_url && (
+          <p className="text-sm text-gray-500 mb-6">
+            Source:{' '}
+            <a
+              href={recipe.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 hover:underline break-all"
+            >
+              {recipe.source_url}
+            </a>
+          </p>
         )}
 
         {ingredients.length > 0 && (

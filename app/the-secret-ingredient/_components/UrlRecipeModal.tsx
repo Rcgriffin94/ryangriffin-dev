@@ -29,7 +29,7 @@ export default function UrlRecipeModal({
       if (fnError) throw new Error(fnError.message);
       if (data?.error) throw new Error(data.error);
 
-      onExtracted(data);
+      onExtracted({ ...data, source_url: url });
     } catch (err) {
       setError((err as Error).message);
       setLoading(false);

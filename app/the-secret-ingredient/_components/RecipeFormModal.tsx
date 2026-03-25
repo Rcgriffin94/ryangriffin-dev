@@ -11,6 +11,7 @@ interface Recipe {
   notes?: string;
   tags?: string[];
   photo_url?: string;
+  source_url?: string;
 }
 
 interface PrefillData {
@@ -20,6 +21,7 @@ interface PrefillData {
   notes?: string;
   tags?: string;
   image_url?: string;
+  source_url?: string;
 }
 
 const EMPTY_FORM = {
@@ -29,6 +31,7 @@ const EMPTY_FORM = {
   notes: '',
   tags: '',
   photo_url: '',
+  source_url: '',
 };
 
 export default function RecipeFormModal({
@@ -59,6 +62,7 @@ export default function RecipeFormModal({
         notes: recipe.notes ?? '',
         tags: (recipe.tags ?? []).join(', '),
         photo_url: recipe.photo_url ?? '',
+        source_url: recipe.source_url ?? '',
       });
       setPhotoPreview(recipe.photo_url ?? '');
     } else if (initialData) {
@@ -69,6 +73,7 @@ export default function RecipeFormModal({
         notes: initialData.notes ?? '',
         tags: initialData.tags ?? '',
         photo_url: initialData.image_url ?? '',
+        source_url: initialData.source_url ?? '',
       });
       if (initialData.image_url) setPhotoPreview(initialData.image_url);
     }
@@ -110,6 +115,7 @@ export default function RecipeFormModal({
         tags: form.tags
           ? form.tags.split(',').map((t) => t.trim()).filter(Boolean)
           : [],
+        source_url: form.source_url || null,
       };
 
       if (recipe) {
