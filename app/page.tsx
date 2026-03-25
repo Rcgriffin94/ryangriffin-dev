@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AuthRedirect from "./_components/AuthRedirect";
 
 const tools = [
   {
@@ -11,6 +12,7 @@ const tools = [
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fafafa] text-[#111111]">
+      <AuthRedirect />
       <header className="border-b border-black/10 px-6 py-5 max-w-5xl mx-auto w-full">
         <span className="text-lg font-semibold tracking-tight">ryangriffin.dev</span>
       </header>
