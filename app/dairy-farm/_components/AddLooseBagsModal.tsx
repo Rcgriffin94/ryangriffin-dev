@@ -13,6 +13,7 @@ export default function AddLooseBagsModal({ onClose, onSuccess }: Props) {
   const today = new Date().toISOString().split('T')[0];
   const [pumpDate, setPumpDate] = useState(today);
   const [bagCount, setBagCount] = useState('');
+  const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,16 +31,18 @@ export default function AddLooseBagsModal({ onClose, onSuccess }: Props) {
       .eq('pump_date', pumpDate)
       .maybeSingle();
 
+    const noteValue = note.trim() || null;
+
     let err;
     if (existing) {
       ({ error: err } = await supabase
         .from('loose_bags')
-        .update({ count: existing.count + count })
+        .update({ count: existing.count + count, note: noteValue })
         .eq('id', existing.id));
     } else {
       ({ error: err } = await supabase
         .from('loose_bags')
-        .insert({ pump_date: pumpDate, count }));
+        .insert({ pump_date: pumpDate, count, note: noteValue }));
     }
 
     if (err) {
@@ -78,6 +81,19 @@ export default function AddLooseBagsModal({ onClose, onSuccess }: Props) {
             placeholder="e.g. 3"
             className="w-full border border-black/20 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-black"
             required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1.5">
+            Note <span className="text-black/40 font-normal">(optional)</span>
+          </label>
+          <input
+            type="text"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="e.g. extra thick session"
+            className="w-full border border-black/20 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-black"
           />
         </div>
 

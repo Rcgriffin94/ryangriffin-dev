@@ -8,7 +8,7 @@ const tools = [
     href: "/the-secret-ingredient",
   },
   {
-    name: "Dairy Farm",
+    name: "Milk on Tap",
     description: "Breast milk freezer inventory tracker.",
     href: "/dairy-farm",
   },

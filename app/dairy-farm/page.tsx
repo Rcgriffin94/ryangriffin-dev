@@ -7,16 +7,20 @@ import Dashboard from './_components/Dashboard';
 import InventoryList from './_components/InventoryList';
 import Charts from './_components/Charts';
 import ExpiryChart from './_components/ExpiryChart';
+import DataTab from './_components/DataTab';
+import HowToUse from './_components/HowToUse';
 import AddGallonBagModal from './_components/AddGallonBagModal';
 import AddLooseBagsModal from './_components/AddLooseBagsModal';
 import RemoveBagsModal from './_components/RemoveBagsModal';
 
 type Modal = 'add-gallon' | 'add-loose' | 'remove' | null;
-type Tab = 'inventory' | 'monitoring';
+type Tab = 'inventory' | 'monitoring' | 'data' | 'how-to-use';
 
 const tabs: { id: Tab; label: string }[] = [
+  { id: 'how-to-use', label: 'How to use' },
   { id: 'inventory', label: 'Inventory' },
   { id: 'monitoring', label: 'Monitoring' },
+  { id: 'data', label: 'Data' },
 ];
 
 export default function DairyFarmPage() {
@@ -25,7 +29,7 @@ export default function DairyFarmPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modal, setModal] = useState<Modal>(null);
-  const [tab, setTab] = useState<Tab>('inventory');
+  const [tab, setTab] = useState<Tab>('how-to-use');
 
   async function fetchInventory() {
     const [gallonRes, looseRes] = await Promise.all([
@@ -57,7 +61,7 @@ export default function DairyFarmPage() {
     <main className="min-h-screen bg-[#fafafa] text-[#111111]">
       <header className="border-b border-black/10 px-6 max-w-2xl mx-auto w-full">
         <div className="py-5">
-          <span className="text-lg font-semibold tracking-tight">Dairy Farm</span>
+          <span className="text-lg font-semibold tracking-tight">Milk on Tap</span>
         </div>
         <nav className="flex gap-1 -mb-px">
           {tabs.map((t) => (
@@ -93,6 +97,10 @@ export default function DairyFarmPage() {
             <Charts />
           </>
         )}
+
+        {tab === 'data' && <DataTab />}
+
+        {tab === 'how-to-use' && <HowToUse />}
       </section>
 
       {tab === 'inventory' && (

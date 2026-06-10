@@ -62,7 +62,12 @@ export default function InventoryList({ gallonBags, looseBags }: Props) {
                 key={bag.id}
                 className="flex items-center justify-between border border-black/10 rounded-xl px-5 py-4"
               >
-                <p className="text-black/40 text-xs">{formatDate(bag.pump_date)}</p>
+                <div>
+                  <p className="text-sm font-medium">{formatDate(bag.pump_date)}</p>
+                  {bag.note && (
+                    <p className="text-black/40 text-xs mt-0.5">{bag.note}</p>
+                  )}
+                </div>
                 <div className="text-right">
                   <p className="text-sm font-medium">{bag.count} bags</p>
                   <p className="text-black/40 text-xs">{bag.count * 5} oz</p>

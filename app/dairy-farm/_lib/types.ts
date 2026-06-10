@@ -28,5 +28,6 @@ export type LooseBag = {
   id: string;
   pump_date: string;
   count: number;
+  note: string | null;
   created_at: string;
 };
