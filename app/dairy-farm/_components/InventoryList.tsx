@@ -40,6 +40,9 @@ export default function InventoryList({ gallonBags, looseBags }: Props) {
                 <div>
                   <p className="font-semibold text-sm">#{bag.bag_number}</p>
                   <p className="text-black/40 text-xs mt-0.5">{formatDate(bag.pump_date)}</p>
+                  {bag.note && (
+                    <p className="text-black/40 text-xs mt-0.5">{bag.note}</p>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium">

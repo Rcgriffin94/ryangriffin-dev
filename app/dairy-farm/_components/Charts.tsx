@@ -1,28 +1,20 @@
 'use client';
 
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from 'recharts';
 import { useEffect, useState } from 'react';
 import { supabase } from '../_lib/supabase';
 
-type Transaction = {
-  type: 'add' | 'remove';
-  oz: number;
-  occurred_on: string;
-};
-
-type DayData = {
+type DataPoint = {
   date: string;
-  frozen: number;
-  withdrawn: number;
+  oz: number;
 };
 
 function formatDateLabel(dateStr: string) {
@@ -33,37 +25,34 @@ function formatDateLabel(dateStr: string) {
 }
 
 export default function Charts() {
-  const [data, setData] = useState<DayData[]>([]);
+  const [data, setData] = useState<DataPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTransactions() {
-      const { data: rows } = await supabase
-        .from('transactions')
-        .select('type, oz, occurred_on')
-        .order('occurred_on', { ascending: true });
+    async function fetch() {
+      const [gallonRes, looseRes] = await Promise.all([
+        supabase.from('gallon_bags').select('pump_date, remaining_bags').gt('remaining_bags', 0),
+        supabase.from('loose_bags').select('pump_date, count'),
+      ]);
 
-      if (!rows || rows.length === 0) {
-        setLoading(false);
-        return;
+      const byDate = new Map<string, number>();
+
+      for (const bag of gallonRes.data ?? []) {
+        byDate.set(bag.pump_date, (byDate.get(bag.pump_date) ?? 0) + bag.remaining_bags * 5);
+      }
+      for (const bag of looseRes.data ?? []) {
+        byDate.set(bag.pump_date, (byDate.get(bag.pump_date) ?? 0) + bag.count * 5);
       }
 
-      const byDay = new Map<string, DayData>();
-      for (const row of rows as Transaction[]) {
-        const key = row.occurred_on;
-        if (!byDay.has(key)) {
-          byDay.set(key, { date: key, frozen: 0, withdrawn: 0 });
-        }
-        const day = byDay.get(key)!;
-        if (row.type === 'add') day.frozen += row.oz;
-        else day.withdrawn += row.oz;
-      }
+      const sorted = Array.from(byDate.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, oz]) => ({ date: formatDateLabel(date), oz }));
 
-      setData(Array.from(byDay.values()).map((d) => ({ ...d, date: formatDateLabel(d.date) })));
+      setData(sorted);
       setLoading(false);
     }
 
-    fetchTransactions();
+    fetch();
   }, []);
 
   if (loading) return null;
@@ -71,33 +60,32 @@ export default function Charts() {
   if (data.length === 0) {
     return (
       <div className="mt-10">
-        <h2 className="text-xs uppercase tracking-widest text-black/40 mb-3">Daily activity</h2>
-        <p className="text-black/30 text-sm text-center py-8">
-          No activity recorded yet. Transactions will appear here after your first add or remove.
-        </p>
+        <h2 className="text-xs uppercase tracking-widest text-black/40 mb-3">Oz by pump date</h2>
+        <p className="text-black/30 text-sm text-center py-8">No inventory in the freezer yet.</p>
       </div>
     );
   }
 
   return (
     <div className="mt-10">
-      <h2 className="text-xs uppercase tracking-widest text-black/40 mb-4">Daily activity</h2>
+      <h2 className="text-xs uppercase tracking-widest text-black/40 mb-4">Oz by pump date</h2>
       <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+        <LineChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#00000010" />
           <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#00000060' }} />
           <YAxis tick={{ fontSize: 11, fill: '#00000060' }} unit=" oz" />
           <Tooltip
             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #00000015' }}
-            formatter={(value, name) => [`${value} oz`, String(name)]}
+            formatter={(value) => [`${value} oz`, 'In freezer']}
           />
-          <Legend
-            wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
-            formatter={(value) => value.charAt(0).toUpperCase() + value.slice(1)}
+          <Line
+            type="monotone"
+            dataKey="oz"
+            stroke="#111111"
+            strokeWidth={2}
+            dot={{ r: 3, fill: '#111111' }}
           />
-          <Bar dataKey="frozen" fill="#4ade80" name="frozen" radius={[3, 3, 0, 0]} />
-          <Bar dataKey="withdrawn" fill="#f87171" name="withdrawn" radius={[3, 3, 0, 0]} />
-        </BarChart>
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );

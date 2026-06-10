@@ -75,6 +75,7 @@ export default function AddGallonBagModal({ looseBags, onClose, onSuccess }: Pro
       pump_date: selectedBag.pump_date,
       total_bags: count,
       remaining_bags: count,
+      note: selectedBag.note ?? null,
     });
 
     if (insertErr) {

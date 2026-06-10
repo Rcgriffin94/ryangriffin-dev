@@ -21,6 +21,7 @@ export type GallonBag = {
   pump_date: string;
   total_bags: number;
   remaining_bags: number;
+  note: string | null;
   created_at: string;
 };
 
