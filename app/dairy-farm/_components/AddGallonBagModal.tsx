@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../_lib/supabase';
 import type { LooseBag } from '../_lib/types';
 import Modal from './Modal';
@@ -27,10 +27,24 @@ function toBagNumberPrefix(dateStr: string) {
 export default function AddGallonBagModal({ looseBags, onClose, onSuccess }: Props) {
   const [selectedId, setSelectedId] = useState(looseBags[0]?.id ?? '');
   const [bagCount, setBagCount] = useState('');
+  const [previewNumber, setPreviewNumber] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const selectedBag = looseBags.find((b) => b.id === selectedId) ?? null;
+
+  useEffect(() => {
+    if (!selectedBag) return;
+    const prefix = toBagNumberPrefix(selectedBag.pump_date);
+    supabase
+      .from('gallon_bags')
+      .select('bag_number')
+      .like('bag_number', `${prefix}-%`)
+      .then(({ data }) => {
+        const sequence = (data?.length ?? 0) + 1;
+        setPreviewNumber(`${prefix}-${sequence}`);
+      });
+  }, [selectedId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -128,6 +142,13 @@ export default function AddGallonBagModal({ looseBags, onClose, onSuccess }: Pro
             required
           />
         </div>
+
+        {previewNumber && (
+          <div className="bg-black/5 rounded-lg px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-black/40 uppercase tracking-widest">Bag name</span>
+            <span className="font-semibold text-sm">#{previewNumber}</span>
+          </div>
+        )}
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
