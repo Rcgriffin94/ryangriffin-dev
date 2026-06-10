@@ -99,6 +99,8 @@ export default function RemoveBagsModal({ gallonBags, looseBags, onClose, onSucc
       return;
     }
 
+    await supabase.from('transactions').insert({ type: 'remove', oz: qty * 5 });
+
     onSuccess();
     onClose();
   }

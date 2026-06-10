@@ -48,6 +48,8 @@ export default function AddLooseBagsModal({ onClose, onSuccess }: Props) {
       return;
     }
 
+    await supabase.from('transactions').insert({ type: 'add', oz: count * 5 });
+
     onSuccess();
     onClose();
   }
