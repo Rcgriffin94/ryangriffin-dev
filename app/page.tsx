@@ -7,6 +7,11 @@ const tools = [
     description: "A family recipe vault.",
     href: "/the-secret-ingredient",
   },
+  {
+    name: "Dairy Farm",
+    description: "Breast milk freezer inventory tracker.",
+    href: "/dairy-farm",
+  },
 ];
 
 export default function Home() {
