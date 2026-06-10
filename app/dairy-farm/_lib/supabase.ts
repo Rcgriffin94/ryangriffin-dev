@@ -1,11 +1,10 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from './types';
 
-let _client: SupabaseClient<Database> | undefined;
+let _client: SupabaseClient | undefined;
 
-function getClient(): SupabaseClient<Database> {
+function getClient(): SupabaseClient {
   if (!_client) {
-    _client = createClient<Database>(
+    _client = createClient(
       process.env.NEXT_PUBLIC_DAIRY_FARM_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_DAIRY_FARM_SUPABASE_KEY!
     );
@@ -13,7 +12,7 @@ function getClient(): SupabaseClient<Database> {
   return _client;
 }
 
-export const supabase = new Proxy({} as SupabaseClient<Database>, {
+export const supabase = new Proxy({} as SupabaseClient, {
   get(_, prop: string | symbol) {
     return (getClient() as unknown as Record<string | symbol, unknown>)[prop];
   },
