@@ -12,6 +12,11 @@ const tools = [
     description: "Breast milk freezer inventory tracker.",
     href: "/dairy-farm",
   },
+  {
+    name: "CIAM Practice Test",
+    description: "100-question randomized practice quiz for the CIAM certificate.",
+    href: "/ciam-practice-test",
+  },
 ];
 
 export default function Home() {
